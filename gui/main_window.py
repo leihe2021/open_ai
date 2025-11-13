@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QComboBox,
     QRadioButton, QLabel, QPushButton, QMessageBox, QFormLayout,
-    QButtonGroup, QGroupBox, QDateTimeEdit, QFrame
+    QButtonGroup, QGroupBox, QDateTimeEdit, QFrame, QDoubleSpinBox
 )
 from PySide6.QtCore import Qt, QDateTime
 from PySide6.QtGui import QFont
@@ -85,9 +85,17 @@ class MainWindow(QMainWindow):
         blood_types = ["A型", "B型", "O型", "AB型"]
         for blood_type in blood_types:
             radio = QRadioButton(blood_type)
-            self.blood_type_group.addButton(radio, blood_type)
+            self.blood_type_group.addButton(radio)  # PySide6 6.9.2: remove second parameter
             blood_type_layout.addWidget(radio)
         form_layout.addRow("血型：", blood_type_layout)
+
+        # 数量输入
+        self.quantity_spinbox = QDoubleSpinBox()
+        self.quantity_spinbox.setMinimum(0.1)
+        self.quantity_spinbox.setMaximum(10000)
+        self.quantity_spinbox.setDecimals(1)
+        self.quantity_spinbox.setValue(1.0)
+        form_layout.addRow("数量：", self.quantity_spinbox)
 
         # 预约时间
         self.reservation_time_edit = QDateTimeEdit()
@@ -193,13 +201,21 @@ class MainWindow(QMainWindow):
         product_type = self.product_type_combo.currentText()
         product_subtype = self.product_subtype_combo.currentText() if self.product_subtype_combo.isEnabled() else ""
         blood_type = self.get_selected_blood_type()
+        quantity = self.quantity_spinbox.value()  # 获取数量
         reservation_time = self.reservation_time_edit.dateTime().toString("yyyy-MM-dd hh:mm:ss")
 
         # 保存到数据库
         try:
-            self.db.add_reservation(campus, product_type, product_subtype, blood_type, reservation_time)
-            self.current_reservation_id = self.db.get_all_reservations()[0][0]  # 获取最新插入的ID
+            self.db.add_reservation(campus, product_type, product_subtype, blood_type, quantity, reservation_time)
+            # 获取最新插入的ID（按ID倒序取第一条）
+            all_reservations = self.db.get_all_reservations()
+            if all_reservations:
+                self.current_reservation_id = all_reservations[0][0]
+            else:
+                self.current_reservation_id = None
 
+            # 显示单位
+            unit = "ml" if product_type == "新鲜冰冻血浆" else "单位"
             QMessageBox.information(
                 self,
                 "提交成功",
@@ -208,6 +224,7 @@ class MainWindow(QMainWindow):
                 f"血制品：{product_type}\n"
                 f"亚类：{product_subtype if product_subtype else '无'}\n"
                 f"血型：{blood_type}\n"
+                f"数量：{quantity} {unit}\n"
                 f"预约时间：{reservation_time}"
             )
 
