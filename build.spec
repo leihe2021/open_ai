@@ -13,11 +13,8 @@ if os.path.exists('database'):
 if os.path.exists('utils'):
     datas.append(('utils', 'utils'))
 
-# 收集PySide6的隐藏导入
+# 收集PySide6的隐藏导入和子模块
 hiddenimports = [
-    'PySide6.QtCore',
-    'PySide6.QtGui',
-    'PySide6.QtWidgets',
     'sqlite3',
     'reportlab.lib',
     'reportlab.platypus',
@@ -32,9 +29,20 @@ hiddenimports = [
     'openpyxl.utils',
 ]
 
+# 收集PySide6的所有子模块
+try:
+    hiddenimports += collect_submodules('PySide6')
+except:
+    pass
+
+# 收集PySide6的数据文件
+try:
+    datas += collect_data_files('PySide6')
+except:
+    pass
+
 # 收集reportlab的数据文件
 try:
-    from PyInstaller.utils.hooks import collect_data_files
     datas += collect_data_files('reportlab')
 except:
     pass
@@ -87,11 +95,11 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='预约血',
+    name='BloodReservationSystem',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=True,
+    upx=False,  # 禁用UPX以避免潜在的兼容性问题
     upx_exclude=[],
     runtime_tmpdir=None,
     console=False,  # 关闭控制台窗口
@@ -102,4 +110,3 @@ exe = EXE(
     icon=None,
     version='version_info.txt'
 )
-
