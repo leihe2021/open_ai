@@ -65,7 +65,8 @@
 ├── build.sh               # Linux/Mac 打包脚本
 ├── README.md              # 说明文档
 ├── gui/                   # 图形界面模块
-│   └── main_window.py
+│   ├── main_window.py
+│   └── reservation_list_window.py
 ├── database/              # 数据库模块
 │   └── db_manager.py
 └── utils/                 # 工具模块
