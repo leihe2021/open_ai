@@ -10,7 +10,7 @@ def main():
     # 创建应用程序
     app = QApplication(sys.argv)
     app.setApplicationName("血制品预约登记系统")
-    app.setApplicationVersion("1.0")
+    app.setApplicationVersion("1.1")
     app.setOrganizationName("医院信息科")
 
     # 设置高DPI支持

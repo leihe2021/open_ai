@@ -21,7 +21,7 @@ class MainWindow(QMainWindow):
 
     def init_ui(self):
         """初始化用户界面"""
-        self.setWindowTitle("血制品预约登记系统 v1.0")
+        self.setWindowTitle("血制品预约登记系统 v1.1")
         self.setMinimumSize(600, 500)
 
         # 创建中央部件
@@ -114,6 +114,13 @@ class MainWindow(QMainWindow):
         self.print_btn.setEnabled(False)
         self.print_btn.clicked.connect(self.print_reservation)
         button_layout.addWidget(self.print_btn)
+
+        self.view_all_btn = QPushButton("查看所有预约")
+        self.view_all_btn.setMinimumHeight(40)
+        view_all_font = QFont("Microsoft YaHei", 11)
+        self.view_all_btn.setFont(view_all_font)
+        self.view_all_btn.clicked.connect(self.view_all_reservations)
+        button_layout.addWidget(self.view_all_btn)
 
         main_layout.addLayout(button_layout)
 
@@ -237,3 +244,27 @@ class MainWindow(QMainWindow):
 
         except Exception as e:
             QMessageBox.critical(self, "打印失败", f"生成打印文件时出错：{str(e)}")
+
+    def view_all_reservations(self):
+        """查看所有预约记录"""
+        try:
+            from gui.reservation_list_window import ReservationListWindow
+
+            # 隐藏当前窗口
+            self.hide()
+
+            # 创建并显示列表窗口
+            list_window = ReservationListWindow(parent=self, db_instance=self.db)
+
+            # 当列表窗口关闭时，显示当前窗口
+            def on_list_window_close():
+                self.show()
+                self.statusBar().showMessage("返回主窗口")
+
+            list_window.window.protocol("WM_DELETE_WINDOW", on_list_window_close)
+            list_window.window.transient(self)
+            list_window.window.grab_set()
+
+        except Exception as e:
+            QMessageBox.critical(self, "错误", f"打开预约记录窗口时出错：{str(e)}")
+            self.show()  # 确保主窗口显示

@@ -19,6 +19,12 @@ try:
 except ImportError:
     HAS_DB = False
 
+try:
+    from utils.exporter import DataExporter
+    HAS_EXPORTER = True
+except ImportError:
+    HAS_EXPORTER = False
+
 
 class ReservationListWindow:
     """预约记录列表窗口"""
@@ -154,6 +160,18 @@ class ReservationListWindow:
             cursor='hand2'
         )
         clear_btn.pack(side=tk.LEFT, padx=5, pady=10)
+
+        # 导出按钮
+        export_btn = tk.Button(
+            toolbar_frame,
+            text="📊 导出数据",
+            font=('Microsoft YaHei', 10),
+            command=self.export_data,
+            bg='#f39c12',
+            fg='white',
+            cursor='hand2'
+        )
+        export_btn.pack(side=tk.LEFT, padx=5, pady=10)
 
         # 统计信息标签
         self.stats_label = tk.Label(
@@ -617,6 +635,63 @@ class ReservationListWindow:
                 import traceback
                 error_detail = traceback.format_exc()
                 messagebox.showerror("错误", f"清空失败：\n{str(e)}\n\n详细信息：\n{error_detail}")
+
+    def export_data(self):
+        """导出数据（Excel/CSV）"""
+        # 检查是否有导出器
+        if not HAS_EXPORTER:
+            messagebox.showerror("错误", "导出模块未正确加载！\n\n请检查 utils/exporter.py 文件")
+            return
+
+        # 获取当前显示的数据
+        try:
+            data = []
+            for item in self.tree.get_children():
+                values = self.tree.item(item, 'values')
+                # 清理数据：去掉数量单位（ml/单位）
+                if len(values) >= 6:
+                    quantity = values[5]
+                    if quantity.endswith(' ml') or quantity.endswith(' 单位'):
+                        quantity = quantity[:-3]
+                    data.append((
+                        values[0],  # ID
+                        values[1],  # 院区
+                        values[2],  # 血制品大类
+                        values[3],  # 血制品亚类
+                        values[4],  # 血型
+                        quantity,   # 数量（数字）
+                        values[6]   # 预约时间
+                    ))
+
+            if not data:
+                messagebox.showwarning("警告", "没有数据可导出！")
+                return
+
+            # 询问导出格式
+            result = messagebox.askyesno(
+                "选择导出格式",
+                "要导出为Excel格式吗？\n\n"
+                "是 (Yes) - 导出为 Excel (.xlsx)\n"
+                "否 (No) - 导出为 CSV (.csv)"
+            )
+
+            file_format = "xlsx" if result else "csv"
+
+            # 导出数据
+            exporter = DataExporter(self.window)
+            success = exporter.export_data(data, file_format)
+
+            if success:
+                self.status_label.config(text=f"数据已导出为 {file_format.upper()} 格式")
+
+        except Exception as e:
+            import traceback
+            error_detail = traceback.format_exc()
+            messagebox.showerror(
+                "导出失败",
+                f"导出数据时发生错误：\n{str(e)}\n\n"
+                f"详细信息：\n{error_detail}"
+            )
 
     def show_context_menu(self, event):
         """显示右键菜单"""
