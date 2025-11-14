@@ -47,7 +47,8 @@ def test_database():
     print("\n  记录详情:")
     print("  " + "-"*80)
     for record in records:
-        res_id, campus, product_type, subtype, blood_type, quantity, reservation_time, created_at = record
+        # v1.1数据库返回7个字段（无created_at）
+        res_id, campus, product_type, subtype, blood_type, quantity, reservation_time = record
         print(f"  ID: {res_id} | 院区: {campus} | 血制品: {product_type} | "
               f"亚类: {subtype or '无'} | 血型: {blood_type} | 数量: {quantity} | "
               f"预约时间: {reservation_time}")

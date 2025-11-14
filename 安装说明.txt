@@ -1,0 +1,47 @@
+血制品预约登记系统 - 部署说明
+==================================
+
+由于当前环境的Python 3.14与PySide6存在版本兼容性问题，
+我们采用以下部署方案：
+
+方案一：使用Python环境运行
+----------------------------
+1. 安装Python 3.8-3.11 (推荐3.9)
+2. 安装依赖：
+   pip install PySide6==6.6.2
+   pip install reportlab==4.1.0
+3. 运行程序：
+   python main.py
+
+方案二：一键安装脚本
+--------------------
+已提供 build.bat 脚本，包含完整的安装和打包流程。
+
+双击运行 build.bat 即可自动完成：
+- 安装所有依赖包
+- 使用PyInstaller打包
+- 生成独立exe文件
+
+方案三：手动打包
+----------------
+如果自动打包失败，请手动执行：
+1. pip install PySide6 reportlab pyinstaller
+2. pyinstaller --onefile --windowed --name="预约血" main.py
+
+注意事项
+--------
+- 目标系统：Windows 10/11
+- 建议Python版本：3.8-3.11
+- 如果遇到DLL缺失，请安装 Microsoft Visual C++ Redistributable
+- 首次运行会自动创建数据库文件 records.db
+
+文件位置
+--------
+- 源代码：./ 目录
+- 打包结果：./dist/预约血.exe
+- 文档：./README.md
+- 说明：./项目总结.md
+
+联系支持
+--------
+如需帮助，请查看 README.md 文件或联系开发团队。

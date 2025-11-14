@@ -3,7 +3,7 @@ from PySide6.QtWidgets import (
     QRadioButton, QLabel, QPushButton, QMessageBox, QFormLayout,
     QButtonGroup, QGroupBox, QDateTimeEdit, QFrame, QDoubleSpinBox
 )
-from PySide6.QtCore import Qt, QDateTime
+from PySide6.QtCore import Qt, QDateTime, QSize
 from PySide6.QtGui import QFont
 from database.db_manager import BloodReservationDB
 from utils.printer import BloodReservationPrinter
@@ -15,14 +15,135 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.db = BloodReservationDB()
-        self.printer = BloodReservationPrinter()
-        self.current_reservation_id = None
         self.init_ui()
 
     def init_ui(self):
         """初始化用户界面"""
-        self.setWindowTitle("血制品预约登记系统 v1.1")
-        self.setMinimumSize(600, 500)
+        self.setWindowTitle("血制品预约登记系统 v1.2 - UI Enhanced")
+        self.setMinimumSize(700, 600)
+
+        # 应用全局样式
+        self.setStyleSheet("""
+            QMainWindow {
+                background-color: #f5f5f5;
+            }
+            QLabel {
+                color: #333333;
+            }
+            QGroupBox {
+                font-weight: bold;
+                font-size: 14px;
+                color: #1976D2;
+                border: 2px solid #e0e0e0;
+                border-radius: 8px;
+                margin-top: 20px;
+                padding-top: 15px;
+                background-color: white;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                subcontrol-position: top left;
+                padding: 0 10px;
+                background-color: white;
+                color: #1976D2;
+            }
+            QComboBox {
+                background-color: white;
+                border: 1px solid #d0d0d0;
+                border-radius: 4px;
+                padding: 8px 12px;
+                font-size: 13px;
+                min-width: 200px;
+            }
+            QComboBox:hover {
+                border-color: #2196F3;
+            }
+            QComboBox::drop-down {
+                border: none;
+                width: 30px;
+            }
+            QComboBox::down-arrow {
+                image: none;
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+                border-top: 5px solid #666666;
+                margin-right: 5px;
+            }
+            QRadioButton {
+                font-size: 13px;
+                color: #333333;
+                padding: 5px;
+            }
+            QRadioButton::indicator {
+                width: 18px;
+                height: 18px;
+            }
+            QRadioButton::indicator::unchecked {
+                border: 2px solid #d0d0d0;
+                border-radius: 9px;
+                background-color: white;
+            }
+            QRadioButton::indicator::checked {
+                border: 2px solid #2196F3;
+                border-radius: 9px;
+                background-color: #2196F3;
+            }
+            QDoubleSpinBox {
+                background-color: white;
+                border: 1px solid #d0d0d0;
+                border-radius: 4px;
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+            QDoubleSpinBox:hover {
+                border-color: #2196F3;
+            }
+            QPushButton {
+                background-color: #2196F3;
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 6px;
+                font-size: 13px;
+                font-weight: 500;
+                min-width: 120px;
+            }
+            QPushButton:hover {
+                background-color: #1976D2;
+            }
+            QPushButton:pressed {
+                background-color: #0D47A1;
+            }
+            QPushButton#submit_btn {
+                background-color: #4CAF50;
+            }
+            QPushButton#submit_btn:hover {
+                background-color: #388E3C;
+            }
+            QPushButton#view_all_btn {
+                background-color: #FF9800;
+            }
+            QPushButton#view_all_btn:hover {
+                background-color: #F57C00;
+            }
+            QDateTimeEdit {
+                background-color: #f5f5f5;
+                border: 1px solid #d0d0d0;
+                border-radius: 4px;
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+            QLabel#title_label {
+                color: #1976D2;
+                font-size: 24px;
+                font-weight: bold;
+                padding: 20px;
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #E3F2FD, stop:1 #BBDEFB);
+                border-radius: 8px;
+                margin-bottom: 10px;
+            }
+        """)
 
         # 创建中央部件
         central_widget = QWidget()
@@ -30,20 +151,15 @@ class MainWindow(QMainWindow):
 
         # 主布局
         main_layout = QVBoxLayout(central_widget)
-        main_layout.setSpacing(15)
-        main_layout.setContentsMargins(20, 20, 20, 20)
+        main_layout.setSpacing(20)
+        main_layout.setContentsMargins(25, 25, 25, 25)
 
         # 标题
         title_label = QLabel("血制品预约登记")
         title_label.setAlignment(Qt.AlignCenter)
-        title_font = QFont("Microsoft YaHei", 20, QFont.Bold)
-        title_label.setFont(title_font)
+        title_label.setObjectName("title_label")
+        title_label.setMinimumHeight(80)
         main_layout.addWidget(title_label)
-
-        # 分割线
-        line = QFrame()
-        line.setFrameShape(QFrame.HLine)
-        main_layout.addWidget(line)
 
         # 创建表单组
         form_group = QGroupBox("预约信息")
@@ -109,31 +225,39 @@ class MainWindow(QMainWindow):
         # 按钮组
         button_layout = QHBoxLayout()
         button_layout.setSpacing(20)
+        button_layout.setAlignment(Qt.AlignCenter)
 
-        self.submit_btn = QPushButton("提交预约")
-        self.submit_btn.setMinimumHeight(40)
-        submit_font = QFont("Microsoft YaHei", 11, QFont.Bold)
-        self.submit_btn.setFont(submit_font)
+        # 提交预约按钮
+        self.submit_btn = QPushButton("✓ 提交预约")
+        self.submit_btn.setObjectName("submit_btn")
+        self.submit_btn.setMinimumHeight(45)
+        self.submit_btn.setMinimumWidth(160)
+        self.submit_btn.setIconSize(QSize(20, 20))
         self.submit_btn.clicked.connect(self.submit_reservation)
         button_layout.addWidget(self.submit_btn)
 
-        self.print_btn = QPushButton("打印预约单")
-        self.print_btn.setMinimumHeight(40)
-        self.print_btn.setEnabled(False)
-        self.print_btn.clicked.connect(self.print_reservation)
-        button_layout.addWidget(self.print_btn)
-
-        self.view_all_btn = QPushButton("查看所有预约")
-        self.view_all_btn.setMinimumHeight(40)
-        view_all_font = QFont("Microsoft YaHei", 11)
-        self.view_all_btn.setFont(view_all_font)
+        # 查看所有预约按钮
+        self.view_all_btn = QPushButton("📋 查看所有预约")
+        self.view_all_btn.setObjectName("view_all_btn")
+        self.view_all_btn.setMinimumHeight(45)
+        self.view_all_btn.setMinimumWidth(160)
+        self.view_all_btn.setIconSize(QSize(20, 20))
         self.view_all_btn.clicked.connect(self.view_all_reservations)
         button_layout.addWidget(self.view_all_btn)
 
         main_layout.addLayout(button_layout)
 
         # 状态栏
-        self.statusBar().showMessage("就绪")
+        self.statusBar().setStyleSheet("""
+            QStatusBar {
+                background-color: #f9f9f9;
+                color: #666666;
+                border-top: 1px solid #e0e0e0;
+                padding: 5px;
+                font-size: 12px;
+            }
+        """)
+        self.statusBar().showMessage("就绪 - 请填写预约信息")
 
     def on_product_type_changed(self, text):
         """血制品大类改变时的事件处理"""
@@ -207,12 +331,6 @@ class MainWindow(QMainWindow):
         # 保存到数据库
         try:
             self.db.add_reservation(campus, product_type, product_subtype, blood_type, quantity, reservation_time)
-            # 获取最新插入的ID（按ID倒序取第一条）
-            all_reservations = self.db.get_all_reservations()
-            if all_reservations:
-                self.current_reservation_id = all_reservations[0][0]
-            else:
-                self.current_reservation_id = None
 
             # 显示单位
             unit = "ml" if product_type == "新鲜冰冻血浆" else "单位"
@@ -228,60 +346,19 @@ class MainWindow(QMainWindow):
                 f"预约时间：{reservation_time}"
             )
 
-            self.print_btn.setEnabled(True)
             self.statusBar().showMessage("预约已提交", 5000)
 
         except Exception as e:
             QMessageBox.critical(self, "提交失败", f"保存预约信息时出错：{str(e)}")
 
-    def print_reservation(self):
-        """打印预约单"""
-        if not self.current_reservation_id:
-            QMessageBox.warning(self, "打印错误", "没有可打印的预约记录！")
-            return
-
-        try:
-            # 获取最新预约记录
-            reservation = self.db.get_reservation_by_id(self.current_reservation_id)
-            if not reservation:
-                QMessageBox.warning(self, "打印错误", "未找到预约记录！")
-                return
-
-            # 生成PDF文件
-            output_file = self.printer.print_reservation(reservation)
-
-            QMessageBox.information(
-                self,
-                "打印成功",
-                f"预约单已生成：{output_file}\n\n"
-                f"请使用PDF阅读器打开文件并打印。"
-            )
-
-            self.statusBar().showMessage(f"已生成PDF：{output_file}", 5000)
-
-        except Exception as e:
-            QMessageBox.critical(self, "打印失败", f"生成打印文件时出错：{str(e)}")
-
     def view_all_reservations(self):
         """查看所有预约记录"""
         try:
-            from gui.reservation_list_window import ReservationListWindow
+            from gui.reservation_list_window_simple import ReservationListWindow
 
-            # 隐藏当前窗口
-            self.hide()
-
-            # 创建并显示列表窗口
-            list_window = ReservationListWindow(parent=self, db_instance=self.db)
-
-            # 当列表窗口关闭时，显示当前窗口
-            def on_list_window_close():
-                self.show()
-                self.statusBar().showMessage("返回主窗口")
-
-            list_window.window.protocol("WM_DELETE_WINDOW", on_list_window_close)
-            list_window.window.transient(self)
-            list_window.window.grab_set()
+            # 创建并显示列表窗口 (不隐藏主窗口，因为是模态对话框)
+            self.list_window = ReservationListWindow(parent=self, db_instance=self.db)
+            self.list_window.exec()  # 使用exec()显示模态对话框
 
         except Exception as e:
             QMessageBox.critical(self, "错误", f"打开预约记录窗口时出错：{str(e)}")
-            self.show()  # 确保主窗口显示

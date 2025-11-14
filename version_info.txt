@@ -31,12 +31,12 @@ StringFileInfo(
     u'040904B0',
     [StringStruct(u'CompanyName', u'医院信息科'),
     StringStruct(u'FileDescription', u'血制品预约登记系统'),
-    StringStruct(u'FileVersion', u'1.1.0.0'),
+    StringStruct(u'FileVersion', u'1.2.0.0'),
     StringStruct(u'InternalName', u'预约血'),
-    StringStruct(u'LegalCopyright', u'Copyright (C) 2024'),
-    StringStruct(u'OriginalFilename', u'预约血.exe'),
+    StringStruct(u'LegalCopyright', u'Copyright (C) 2025'),
+    StringStruct(u'OriginalFilename', u'BloodReservationSystem.exe'),
     StringStruct(u'ProductName', u'血制品预约登记系统'),
-    StringStruct(u'ProductVersion', u'1.1.0.0')])
+    StringStruct(u'ProductVersion', u'1.2.0.0')])
   ]),
 VarFileInfo([VarStruct(u'Translation', [1033, 1200])])
   ]

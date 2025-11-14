@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Bash(sqlite3:*)",
+      "Bash(git add .gitignore)",
+      "Bash(git add gui/ database/ utils/ main.py main_demo.py build.spec build_demo.spec build_exe.py build.bat build.sh requirements.txt README.md version_info.txt test_db.py)",
+      "Bash(git push -u origin master)",
+      "Bash(pip install -q openpyxl==3.1.2)",
+      "Bash(git add .)",
+      "Bash(git reset)",
+      "Bash(git add utils/exporter.py gui/reservation_list_window.py gui/main_window.py main.py requirements.txt version_info.txt README.md)",
+      "Bash(git commit -m \"Upgrade to v1.1: Add data export functionality\n\n✨ New Features:\n- Add DataExporter class supporting Excel (.xlsx) and CSV export\n- Add ''Export Data'' button to reservation list window\n- Add ''View All Reservations'' button to main window\n- Support filtered data export (by date)\n- Auto-clean quantity values (remove units for export)\n\n📦 Dependencies:\n- Add openpyxl==3.1.2 for Excel support\n\n🔧 Technical Details:\n- Excel export with formatting (colors, fonts, alignment)\n- CSV export with UTF-8 BOM encoding\n- Dialog-based file save with format selection\n- Integrated with existing tkinter list window\n\n📋 Files Changed:\n- utils/exporter.py: New data export module\n- gui/reservation_list_window.py: Add export button and functionality\n- gui/main_window.py: Add ''view all'' button\n- requirements.txt: Add openpyxl dependency\n- README.md & version_info.txt: Update to v1.1\")",
+      "Bash(pyinstaller --clean build.spec)",
+      "Bash(/c/Users/Administrator/miniconda3/envs/blood_reservation/python.exe:*)",
+      "Bash(find:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

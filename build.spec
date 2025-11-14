@@ -13,6 +13,18 @@ if os.path.exists('database'):
 if os.path.exists('utils'):
     datas.append(('utils', 'utils'))
 
+# 手动添加 PySide6 和 shiboken6 的 DLL 文件
+# 查找 conda 环境中 PySide6 的 bin 目录
+try:
+    import PySide6
+    pyside6_path = os.path.dirname(PySide6.__file__)
+    # 查找父级的 Library/bin 目录
+    bin_path = os.path.join(os.path.dirname(os.path.dirname(pyside6_path)), 'Library', 'bin')
+    if os.path.exists(bin_path):
+        datas.append((bin_path, 'Library/bin'))
+except:
+    pass
+
 # 收集PySide6的隐藏导入和子模块
 hiddenimports = [
     'sqlite3',
@@ -91,15 +103,12 @@ pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 exe = EXE(
     pyz,
     a.scripts,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
     [],
     name='BloodReservationSystem',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=False,  # 禁用UPX以避免潜在的兼容性问题
+    upx=False,
     upx_exclude=[],
     runtime_tmpdir=None,
     console=False,  # 关闭控制台窗口
@@ -109,4 +118,16 @@ exe = EXE(
     entitlements_file=None,
     icon=None,
     version='version_info.txt'
+)
+
+# 添加COLLECT部分 - 生成目录模式
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    strip=False,
+    upx=False,
+    upx_exclude=[],
+    name='BloodReservationSystem',
 )
